@@ -1,0 +1,23 @@
+# Local environments
+venv/
+.venv/
+
+# Credentials
+.env
+.env.*
+!.env.example
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Generated responses and logs
+data/
+*.log
+
+# Editor and operating system files
+.idea/
+.DS_Store
