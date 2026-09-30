@@ -1,4 +1,5 @@
 import json
+from io import BytesIO
 from decimal import Decimal
 from unittest.mock import Mock
 
@@ -26,14 +27,15 @@ def observation(value=35064272):
 
 
 def fake_response(payload, status=200):
+    body = json.dumps(payload).encode("utf-8")
+
     response = requests.Response()
     response.status_code = status
     response.url = "https://api.worldbank.org/test"
-    response._content = json.dumps(payload).encode("utf-8")
     response.encoding = "utf-8"
+    response.raw = BytesIO(body)
 
     return response
-
 
 # ---------- Validation tests ----------
 
