@@ -160,3 +160,11 @@ or purchasing-power comparisons.
 - Upserts retain existing observations absent from later responses.
 - A forced shutdown or database outage can leave a monitoring
   record marked `running`.
+## Scheduled execution on macOS
+
+The pipeline supports daily local runs through launchd, with database
+password retrieval from macOS Keychain, persistent logs and failure
+notifications. A scheduler-triggered run and a simulated failure were
+tested successfully.
+
+See [automation setup](automation/README.md).
