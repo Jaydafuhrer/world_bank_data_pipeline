@@ -168,3 +168,71 @@ notifications. A scheduler-triggered run and a simulated failure were
 tested successfully.
 
 See [automation setup](automation/README.md).
+
+## Run with Docker Compose
+
+### Prerequisites
+
+- Docker Desktop installed and running.
+- PostgreSQL running on your Mac and reachable from Docker.
+- An `etl_from_python` database prepared using `sql/00_setup.sql`.
+
+This configuration runs the Python pipeline in a container and connects
+to PostgreSQL on the host Mac through `host.docker.internal:5432`.
+It does not create a PostgreSQL container.
+
+### Build the image
+
+From the project directory:
+
+```bash
+docker compose build
+```
+
+### Set the database password
+
+In macOS's default zsh terminal:
+
+```zsh
+read -s "DB_PASSWORD?Enter PostgreSQL password: "
+export DB_PASSWORD
+echo
+```
+
+For Bash:
+
+```bash
+read -s -p "Enter PostgreSQL password: " DB_PASSWORD
+export DB_PASSWORD
+echo
+```
+
+The password must be available in the terminal session used to run
+Compose. It is not stored in the image or Compose file.
+
+### Run the pipeline
+
+```bash
+docker compose run --rm pipeline
+```
+
+Compose supplies the database settings and mounts the local `data`
+directory at `/app/data`. Raw responses and logs remain on the Mac
+after the container exits.
+
+The pipeline inserts or updates observations in the configured database.
+Reruns update matching observation keys rather than inserting duplicates.
+
+### Docker files
+
+| File | Purpose |
+|---|---|
+| `Dockerfile` | Builds the Python pipeline image |
+| `.dockerignore` | Excludes local environments, credentials and generated files from the build context |
+| `compose.yaml` | Configures the pipeline container, database connection and archive directory |
+
+### Verified execution
+
+On 22 October 2026, both a direct Docker run and a Docker Compose run
+successfully processed 264 observations. Database checks after the
+direct run confirmed matching total-row and unique-observation counts.
